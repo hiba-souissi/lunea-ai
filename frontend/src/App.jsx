@@ -11,45 +11,44 @@ function App() {
   const [input, setInput] = useState('');
   const [recommendations, setRecommendations] = useState([]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = async () => {
+  if (!input.trim()) return;
 
-    const userMsg = { text: input, from: 'user' };
-    setMessages(prev => [...prev, userMsg]);
-    setInput('');
+  const userMsg = { text: input, from: 'user' };
+  setMessages(prev => [...prev, userMsg]);
+  setInput('');
 
-    // Simulation IA intelligente
-    setTimeout(() => {
-      const lower = input.toLowerCase();
-      let botResponse = "Merci ! ";
-      let products = [];
+  try {
+    const response = await fetch('http://localhost:5000/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: input,
+        history: messages.map(m => ({
+          role: m.from === 'user' ? 'user' : 'assistant',
+          content: m.text
+        }))
+      })
+    });
 
-      if (lower.includes('grasse') || lower.includes('brillante') || lower.includes('acné')) {
-        botResponse += "Je vous recommande des produits matifiants et purifiants.";
-        products = ['Gel Nettoyant Purifiant A', 'Sérum Matifiant B', 'Crème Légère C'];
-      } 
-      else if (lower.includes('sèche') || lower.includes('desséchée') || lower.includes('tiraille')) {
-        botResponse += "Votre peau a besoin d’hydratation intense.";
-        products = ['Crème Riche Hydratante X', 'Huile Nourrissante Y', 'Masque Réparateur Z'];
-      }
-      else if (lower.includes('mixte') || lower.includes('zone t')) {
-        botResponse += "Équilibrons votre zone T et vos joues.";
-        products = ['Lotion Équilibrante M', 'Gel-Crème N', 'Poudre Matifiante P'];
-      }
-      else if (lower.includes('normale')) {
-        botResponse += "Parfait ! On peut prévenir ou sublimer.";
-        products = ['Sérum Antioxydant Q', 'Crème de Jour R', 'Eau Thermale S'];
-      }
-      else {
-        botResponse += "Pouvez-vous préciser votre type de peau ou vos préoccupations ?";
-      }
+    if (!response.ok) throw new Error('Erreur réseau');
 
-      setMessages(prev => [...prev, { text: botResponse, from: 'bot' }]);
-      if (products.length > 0) {
-        setRecommendations(products);
-      }
-    }, 1000);
-  };
+    const data = await response.json();
+    
+    setMessages(prev => [...prev, { text: data.response, from: 'bot' }]);
+    
+    if (data.recommendations && data.recommendations.length > 0) {
+      setRecommendations(data.recommendations.map(p => `${p.name} - ${p.price}`));
+    }
+
+  } catch (err) {
+    console.error("Erreur:", err);
+    setMessages(prev => [...prev, { 
+      text: "Désolée, je ne peux pas répondre. Le serveur est-il lancé ?", 
+      from: 'bot' 
+    }]);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 flex flex-col">

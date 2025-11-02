@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Gel Nettoyant Purifiant A",
+    "type": "nettoyant",
+    "skin": ["grasse", "acné", "brillance"],
+    "price": "18dt"
+  },
+  {
+    "name": "Crème Hydratante Intense X",
+    "type": "hydratant",
+    "skin": ["sèche", "desséchée", "tiraillement"],
+    "price": "25dt"
+  },
+  {
+    "name": "Sérum Matifiant B",
+    "type": "sérum",
+    "skin": ["grasse", "brillance"],
+    "price": "32dt"
+  },
+  {
+    "name": "Lotion Équilibrante M",
+    "type": "lotion",
+    "skin": ["mixte", "zone T"],
+    "price": "22dt"
+  },
+  {
+    "name": "Sérum Antioxydant Q",
+    "type": "sérum",
+    "skin": ["normale", "prévention"],
+    "price": "38dt"
+  }
+]
